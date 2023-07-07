@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+</style>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css" />
+<head>
+    
+  </head>
+
+</head>
+<body>
+
+<h2>Factory Data Table</h2>
+
+<table id="table">
+<thead>
+  <tr>
+    <th>ID</th>
+    <th>FactoryID</th>
+    <th>OrgID</th>
+    <th>Country</th>
+    <th>Execution Date</th>
+    <th>Fail Rate</th>
+    <th>Defect Rate</th>
+  </tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.css" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready( function () {
+        $('#table').DataTable();
+    } );
+    var columns = [];
+    $(document).ready(function () {
+        setInterval(reload_data, 5000)
+        console.log("Reloading data ...")
+    });     
+    function reload_data(){ 
+        $.ajax({
+            url: "http://localhost:5000/internal_api/v1/api_management/messages/?limit=25&&page=1&&sort_by=fail_rate&&sort_type=-1",
+            type:"GET",
+            success: function (data) {
+                console.log(data)
+                columnNames = Object.keys(data.data[0]);
+                for (var i in columnNames) {
+                    columns.push({
+                        data: columnNames[i],
+                        title: columnNames[i]
+                    });
+                }
+                data = data.data
+ 
+                for(let i = 0; i < data.length; i++) {
+                    var dataTable = data[i]; // data is json parsed
+                        $('#table').dataTable().fnAddData([
+                                dataTable.id, 
+                                dataTable.factory_id, 
+                                dataTable.org_id, 
+                                dataTable.country,
+                                dataTable.execution_date,
+                                dataTable.fail_rate,
+                                dataTable.defect_rate,
+                        ]);
+              }
+            }
+        });  
+    }      
+</script>
+</body>
+</html>
+

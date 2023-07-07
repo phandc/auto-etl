@@ -1,0 +1,17 @@
+version: "3.5"
+
+services:
+  process-worker:
+    image: process-worker
+    build: 
+      context: ..
+      dockerfile: ./deploy/Dockerfile 
+    restart: always 
+    networks:
+      - my-proxy-net
+
+
+networks:
+  my-proxy-net:
+      name: custom_network
+      external: true
